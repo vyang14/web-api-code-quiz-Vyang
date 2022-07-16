@@ -21,8 +21,8 @@ var viewScore = document.querySelector('#highscore');
 var empty = document.getElementsByClassName('close')[0];
 var initialEl = document.getElementById('nameList');
 var scoreEl = document.getElementById('scoreList');
-var listItem = document.createElement('li');
 var storage;
+
 var quizQuestions = [
     {
     question: "Question 1: How do you declare a JavaScript variable?",
@@ -118,36 +118,41 @@ var quizQuestions = [
 var i = 0;
 var finalScore = 0;
 
+//opens highscore modal when clicking on the "View Highscores" header
 viewScore.onclick = function(event) {
     event.preventDefault();
     scoreModal.style.display = "block";
     storage = JSON.parse(localStorage.getItem('highScores'));
-    debugger;
     for (var x = 0; x < storage.length; x++){
-        listItem.value = JSON.stringify(storage[x].names);
+        var listItem = document.createElement('li');
+        listItem.appendChild(document.createTextNode(storage[x].names))
+        console.log(listItem);
         initialEl.appendChild(listItem);
-        console.log(`name ${x} ran. listItem value = ${listItem.value}`);
-        listItem.value = JSON.stringify(storage[x].scores);
+    };
+    for (var x = 0; x < storage.length; x++){
+        var listItem = document.createElement('li');
+        listItem.appendChild(document.createTextNode(storage[x].scores))
+        console.log(listItem);
         scoreEl.appendChild(listItem);
-        console.log(`score ${x} ran. listItem value = ${listItem.value}`);
-        
-    }
+    };
 };
 
+//exits high score modal when clicking on the x icon
 empty.onclick = function() {
     scoreModal.style.display = "none";
 };
 
+//exits high score modal when clicking on the empty window space
 window.onclick = function(event) {
     if (event.target == scoreModal) {
         scoreModal.style.display = "none";
     }
 };
 
+//saves scores to local storage
 function logScores (){
     console.log("Submit button pressed")
     var moreScores = JSON.parse(localStorage.getItem('highScores'));
-    // debugger;
     if (enterInitials[1].value === ''){
         alert("Please don't leave the form blank.")
         return;
@@ -167,7 +172,6 @@ function logScores (){
     enterInitials[2].value = 'Submitted!';
     enterInitials[1].disabled=true;
     enterInitials[2].disabled=true;
-    // debugger;
     setTimeout(function(){
         enterInitials[1].value = '';
         enterInitials[2].value = 'Submit';
@@ -177,6 +181,8 @@ function logScores (){
         }, 2000);
     }
 };
+
+//displays high score form and restart quiz button
 function highScore(finalScore) {
     console.log("highScore run");
     b1.classList.add('hide');
@@ -191,10 +197,10 @@ function highScore(finalScore) {
     scoreText.textContent = finalScore;
     enterInitials.forEach(enterInitials => enterInitials.classList.remove('hide'));
     btnSub.addEventListener('click', logScores);
-    // enterInitials[1].addEventListener('submit', logScores);
 };
 
-function quizFx (){ //function that 
+//changes which question and answers show
+function quizFx (){ 
     bodyEl.removeAttribute("id");
     smallEl.textContent = " ";
     console.log('quizFx started');
@@ -219,8 +225,9 @@ function quizFx (){ //function that
     b4.addEventListener('click', answerSubmit);
 };
 
-function answerSubmit (){
-    i+=10;
+//checks if the answer is correct/incorrect and iterates questions by 1
+function answerSubmit (){ 
+    i+=1;
     if (this.dataset.correct === 'true') { 
         bodyEl.setAttribute("id", "greenBod");
         smallEl.textContent = 'Correct!';
@@ -234,7 +241,8 @@ function answerSubmit (){
     }
 };
 
-function nextQuestion(){
+//disables the user from being able to submit multiple answers and 
+function nextQuestion(){ 
     allBtns.forEach(allBtns => allBtns.disabled=true)
     setTimeout(function(){
         if (i <= 9) {
@@ -246,6 +254,7 @@ function nextQuestion(){
     }, 2000);
 };
 
+//start quiz, initializes timer and score values
 startBtn.addEventListener("click", function(){
     timeLeft = 100;
     finalScore = 0;
@@ -270,6 +279,5 @@ startBtn.addEventListener("click", function(){
             highScore(finalScore);
             }
     }, 1000);
-
     quizFx();
 });
