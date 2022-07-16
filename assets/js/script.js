@@ -135,7 +135,6 @@ viewScore.onclick = function() {
         listItem.value = allInitials[initials]
         initialEl.appendChild(listItem);
     }
-
 };
 
 empty.onclick = function() {
@@ -158,10 +157,10 @@ function logScores (){
     } else {
         var finalInitials = JSON.stringify(enterInitials[1].value);
         if (storedValues.scores === null) {
-            debugger;
+            // debugger;
             storedValues.scores = [finalScore];
         } else {
-            debugger;
+            // debugger;
             storedValues.scores.push(finalScore);
         }
         if (storedValues.names === null) {
@@ -171,7 +170,7 @@ function logScores (){
         }
     localStorage.setItem("highScores", JSON.stringify(finalScore));
     localStorage.setItem("userInitials", JSON.stringify(finalInitials));
-    debugger;
+    // debugger;
     enterInitials[1].value = ' Thanks for playing! ';
     enterInitials[2].value = 'Submitted!';
     enterInitials[2].disabled=true;
@@ -180,7 +179,6 @@ function logScores (){
         enterInitials[2].value = 'Submit';
         enterInitials[2].disabled=false;
         enterInitials.forEach(enterInitials => enterInitials.classList.add('hide'));
-        
         }, 2000);
     }
 }
@@ -201,7 +199,7 @@ function highScore(finalScore) {
     btnSub.addEventListener('click', logScores);
 };
 
-function quizFx (){
+function quizFx (){ //function that 
     bodyEl.removeAttribute("id");
     smallEl.textContent = " ";
     console.log('quizFx started');
