@@ -6,7 +6,7 @@ var bigEl = document.querySelector('#bigLine');
 var smallEl = document.querySelector('#smallLine');
 var bodyEl = document.querySelector('#customBody');
 var enterInitials = document.getElementsByName('userName');
-var userInitials = document.querySelector('#userInitials');
+var initialForm = document.querySelector('#userInitials');
 var btnSub = document.getElementById('submitScore');
 var resultEl = document.querySelector('#result');
 var answerEl = document.querySelector('answers');
@@ -22,12 +22,7 @@ var empty = document.getElementsByClassName('close')[0];
 var initialEl = document.getElementById('nameList');
 var scoreEl = document.getElementById('scoreList');
 var listItem = document.createElement('li');
-var storedValues = {
-    names: [],
-    scores: []
-};
-
-
+var storage;
 var quizQuestions = [
     {
     question: "Question 1: How do you declare a JavaScript variable?",
@@ -123,17 +118,19 @@ var quizQuestions = [
 var i = 0;
 var finalScore = 0;
 
-viewScore.onclick = function() {
+viewScore.onclick = function(event) {
+    event.preventDefault();
     scoreModal.style.display = "block";
-    storedValues.names = JSON.parse(localStorage.getItem('userInitials'));
-    storedValues.scores = JSON.parse(localStorage.getItem('highScores'));
-    for (var scores = 0; scores < allScores.length; scores++){
-        listItem.value = allScores[scores]
-        scoreEl.appendChild(listItem);
-    }
-    for (var initials = 0; initials < allInitials.length; initials++){
-        listItem.value = allInitials[initials]
+    storage = JSON.parse(localStorage.getItem('highScores'));
+    debugger;
+    for (var x = 0; x < storage.length; x++){
+        listItem.value = JSON.stringify(storage[x].names);
         initialEl.appendChild(listItem);
+        console.log(`name ${x} ran. listItem value = ${listItem.value}`);
+        listItem.value = JSON.stringify(storage[x].scores);
+        scoreEl.appendChild(listItem);
+        console.log(`score ${x} ran. listItem value = ${listItem.value}`);
+        
     }
 };
 
@@ -149,40 +146,37 @@ window.onclick = function(event) {
 
 function logScores (){
     console.log("Submit button pressed")
-    storedValues.names = JSON.parse(localStorage.getItem('userInitials'));
-    storedValues.scores = JSON.parse(localStorage.getItem('highScores'));
+    var moreScores = JSON.parse(localStorage.getItem('highScores'));
+    // debugger;
     if (enterInitials[1].value === ''){
         alert("Please don't leave the form blank.")
         return;
     } else {
         var finalInitials = JSON.stringify(enterInitials[1].value);
-        if (storedValues.scores === null) {
-            // debugger;
-            storedValues.scores = [finalScore];
+        var storedValues = {
+            names: finalInitials,
+            scores: finalScore
+        };
+        if (moreScores === null) {
+            localStorage.setItem("highScores", JSON.stringify([storedValues]));
         } else {
-            // debugger;
-            storedValues.scores.push(finalScore);
+            moreScores.push(storedValues);
+            localStorage.setItem("highScores", JSON.stringify(moreScores));
         }
-        if (storedValues.names === null) {
-            storedValues.names = [finalInitials];
-        } else {
-            storedValues.names.push(finalInitials)
-        }
-    localStorage.setItem("highScores", JSON.stringify(finalScore));
-    localStorage.setItem("userInitials", JSON.stringify(finalInitials));
-    // debugger;
     enterInitials[1].value = ' Thanks for playing! ';
     enterInitials[2].value = 'Submitted!';
+    enterInitials[1].disabled=true;
     enterInitials[2].disabled=true;
+    // debugger;
     setTimeout(function(){
         enterInitials[1].value = '';
         enterInitials[2].value = 'Submit';
+        enterInitials[1].disabled=false;
         enterInitials[2].disabled=false;
         enterInitials.forEach(enterInitials => enterInitials.classList.add('hide'));
         }, 2000);
     }
-}
-
+};
 function highScore(finalScore) {
     console.log("highScore run");
     b1.classList.add('hide');
@@ -197,6 +191,7 @@ function highScore(finalScore) {
     scoreText.textContent = finalScore;
     enterInitials.forEach(enterInitials => enterInitials.classList.remove('hide'));
     btnSub.addEventListener('click', logScores);
+    // enterInitials[1].addEventListener('submit', logScores);
 };
 
 function quizFx (){ //function that 
